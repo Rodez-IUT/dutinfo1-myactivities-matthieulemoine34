@@ -16,14 +16,15 @@ CREATE OR REPLACE FUNCTION get_default_owner() RETURNS "user" AS $$
 $$ LANGUAGE PLpgsql;
 
 CREATE OR REPLACE FUNCTION fix_activities_without_owner() RETURNS SETOF activity AS $$
-	
 	BEGIN
-		SELECT *
-		FROM activity
-		WHERE username = 'Default Owner';
-		IF NOT FOUND THEN
-	
-	
+		
+		RETURN query 
+			UPDATE activity
+			SET owner_id = (select id from get_default_owner())
+			WHERE owner_id IS null
+			RETURNING *;
+		
 	END;
 	
-$$ LANGUAGE PLpgsql;
+	
+$$ LANGUAGE plpgsql;
