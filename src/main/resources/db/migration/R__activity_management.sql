@@ -18,13 +18,14 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION find_all_activities(activities_cursor refcursor) RETURNS refcursor AS $$
 	DECLARE
-		iteration := SELECT COUNT(id) FROM "activity";
+		b "user"%rowtype;
 	BEGIN 
 		
-		FOR i IN 1..iteration LOOP
-   			 OPEN $1 FOR SELECT title FROM "activity"  
-		END LOOP;
-		
+   		OPEN $1 FOR SELECT A.id, A.title, U.username 
+   		            FROM activity A 
+   		            FULL OUTER JOIN "user" U 
+   		            ON A.owner_id = U.id;  
+		return $1;
 		
 		
 		

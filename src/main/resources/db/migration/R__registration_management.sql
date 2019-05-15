@@ -1,21 +1,21 @@
 CREATE OR REPLACE FUNCTION register_user_on_activity(id_user bigint, id_activity bigint) RETURNS "registration" AS $$
 	DECLARE
-		lignes "registration"%rowtype;
+		ligne "registration"%rowtype;
 
 	BEGIN
-			select * into lignes from "registration"
+			select * into ligne from "registration"
    		         where user_id = id_user
      	  	     and activity_id = id_activity;
      	   	if not found then
 				INSERT INTO registration (id,user_id,activity_id)
 		    	values (nextval('id_generator'),id_user,id_activity);
-		    	select * into lignes from "registration"
+		    	select * into ligne from "registration"
    		            where user_id = id_user
      	  	        and activity_id = id_activity;
 			else 
 				RAISE EXCEPTION 'registration_already_exists';
 			end if;
-			return lignes;
+			return ligne;
 	
 	END
 $$ LANGUAGE plpgsql;
